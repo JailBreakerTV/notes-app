@@ -75,7 +75,7 @@ Widget printWidgets(BuildContext context) {
         size: 120,
       ),
       Text(
-        "Keine Notizen vorhanden",
+        "Keine Notizen vorhanden!",
         textAlign: TextAlign.center,
         style: TextStyle(fontSize: 30, fontFamily: 'Poppins'),
       )
