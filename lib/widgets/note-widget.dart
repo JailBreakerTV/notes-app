@@ -38,7 +38,7 @@ class NoteWidget extends StatelessWidget {
                         child: Center(
                           child: ListTile(
                             title: Text(
-                              this.note.topic.toUpperCase(),
+                              _cutNoteTopic(this.note),
                               textAlign: TextAlign.center,
                               style: TextStyle(
                                 fontFamily: 'Poppins',
@@ -85,4 +85,13 @@ Text _createExpireText(Note note) {
       color: critical ? Colors.white : Colors.redAccent,
     ),
   );
+}
+
+String _cutNoteTopic(Note note) {
+  final String topic = note.topic.toUpperCase();
+  final int length = note.topic.length;
+  if (length >= 30) {
+    return topic.substring(0, 30) + "...";
+  }
+  return topic;
 }

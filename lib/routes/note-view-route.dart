@@ -1,5 +1,6 @@
 import 'package:Notes/note.dart';
 import 'package:Notes/utils/utils.dart';
+import 'package:Notes/widgets/note-appbar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
@@ -22,15 +23,14 @@ class NoteViewRoute extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(this.note.topic),
-      ),
+      appBar: NoteAppBar(this.note.topic),
       body: GestureDetector(
         onTap: () {
           FocusScope.of(context).requestFocus(new FocusNode());
         },
         child: Center(
           child: Container(
+            margin: EdgeInsets.all(30),
             child: Form(
               child: ListView(
                 children: <Widget>[
@@ -56,8 +56,10 @@ class NoteViewRoute extends StatelessWidget {
                       this.note.value = text,
                       backend.updateNote(this.note),
                     },
+                    maxLines: null,
                     textAlign: TextAlign.left,
                     initialValue: this.note.value,
+                    keyboardType: TextInputType.multiline,
                     decoration: InputDecoration(
                       labelText: "Inhalt",
                       labelStyle: TextStyle(

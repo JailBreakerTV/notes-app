@@ -1,6 +1,7 @@
 import 'package:Notes/db/backend.dart';
 import 'package:Notes/note.dart';
 import 'package:Notes/routes/note-create-route.dart';
+import 'package:Notes/widgets/note-appbar.dart';
 import 'package:Notes/widgets/note-widget.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -46,11 +47,7 @@ class _NoteHomeState extends State<NoteHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          widget.title,
-        ),
-      ),
+      appBar: NoteAppBar(super.widget.title),
       body: Center(
         child: printNotes(context),
       ),

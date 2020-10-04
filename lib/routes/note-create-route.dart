@@ -1,6 +1,7 @@
 import 'package:Notes/main.dart';
 import 'package:Notes/note.dart';
 import 'package:Notes/utils/utils.dart';
+import 'package:Notes/widgets/note-appbar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
@@ -25,9 +26,7 @@ class NoteCreateRoute extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Notiz erstellen"),
-      ),
+      appBar: NoteAppBar("Notiz erstellen"),
       body: Center(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
