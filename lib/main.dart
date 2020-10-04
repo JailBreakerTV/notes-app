@@ -94,6 +94,6 @@ Widget printNotes(BuildContext context) {
 
 List<Widget> _loadWidgets(BuildContext context) {
   List<Note> notes = List<Note>.from(Note.notes);
-  notes.sort((first, second) => second.expireAt.compareTo(first.expireAt));
+  notes.sort((first, second) => first.expireAt.compareTo(second.expireAt));
   return notes.map((note) => NoteWidget(note)).toList();
 }

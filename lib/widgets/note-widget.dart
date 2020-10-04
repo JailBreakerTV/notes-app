@@ -90,8 +90,8 @@ Text _createExpireText(Note note) {
 String _cutNoteTopic(Note note) {
   final String topic = note.topic.toUpperCase();
   final int length = note.topic.length;
-  if (length >= 30) {
-    return topic.substring(0, 30) + "...";
+  if (length >= 20) {
+    return topic.substring(0, 20) + "...";
   }
   return topic;
 }

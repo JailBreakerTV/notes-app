@@ -36,8 +36,11 @@ class NoteViewRoute extends StatelessWidget {
                 children: <Widget>[
                   TextFormField(
                     onChanged: (text) => {
-                      this.note.topic = text,
-                      backend.updateNote(this.note),
+                      if (text.isNotEmpty)
+                        {
+                          this.note.topic = text,
+                          backend.updateNote(this.note),
+                        }
                     },
                     textAlign: TextAlign.left,
                     initialValue: this.note.topic,
@@ -53,8 +56,10 @@ class NoteViewRoute extends StatelessWidget {
                   TextFormField(
                     onChanged: (text) =>
                     {
-                      this.note.value = text,
-                      backend.updateNote(this.note),
+                      if (text.isNotEmpty) {
+                        this.note.value = text,
+                        backend.updateNote(this.note),
+                      }
                     },
                     maxLines: null,
                     textAlign: TextAlign.left,
