@@ -1,8 +1,9 @@
+import 'package:Notes/main.dart';
 import 'package:Notes/note.dart';
+import 'package:Notes/utils/utils.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
-import 'package:intl/intl.dart';
 
 // ignore: must_be_immutable
 class NoteCreateRoute extends StatelessWidget {
@@ -13,8 +14,13 @@ class NoteCreateRoute extends StatelessWidget {
   final TextEditingController topicController = new TextEditingController();
   final TextEditingController valueController = new TextEditingController();
   final TextEditingController dateTimeController = new TextEditingController(
-      text: _formatDateTime(DateTime.fromMillisecondsSinceEpoch(
-          DateTime.now().millisecondsSinceEpoch + 86400000)));
+    text: Utils.formatTime(
+      DateTime.fromMillisecondsSinceEpoch(
+        DateTime.now().millisecondsSinceEpoch +
+            Duration(days: 1).inMilliseconds,
+      ),
+    ),
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -33,23 +39,20 @@ class NoteCreateRoute extends StatelessWidget {
                 right: 30.0,
               ),
               child: Form(
-                key: _formKey,
+                key: this._formKey,
                 child: Column(
                   children: <Widget>[
                     TextFormField(
-                      validator: (value) {
-                        if (value.isEmpty) {
-                          return 'Die Überschrift darf nicht leer sein!';
-                        }
-                        return null;
-                      },
+                      validator: _createValidator(
+                        'Die Überschrift darf nicht leer sein!',
+                      ),
                       controller: this.topicController,
                       decoration: InputDecoration(
                         labelText: 'Überschrift',
                         labelStyle: TextStyle(
+                          fontFamily: 'Poppins',
                           color: Colors.grey,
                           fontSize: 20.0,
-                          letterSpacing: 1.0,
                         ),
                       ),
                     ),
@@ -57,40 +60,50 @@ class NoteCreateRoute extends StatelessWidget {
                       padding: EdgeInsets.only(bottom: 30),
                     ),
                     TextFormField(
-                      validator: (value) {
-                        if (value.isEmpty) {
-                          return 'Der Inhalt darf nicht leer sein!';
-                        }
-                        return null;
-                      },
+                      validator: _createValidator(
+                        'Der Inhalt darf nicht leer sein!',
+                      ),
                       controller: this.valueController,
                       decoration: InputDecoration(
                         labelText: 'Inhalt',
                         labelStyle: TextStyle(
+                          fontFamily: 'Poppins',
                           color: Colors.grey,
                           fontSize: 20.0,
-                          letterSpacing: 1.0,
                         ),
                       ),
                     ),
                     TextFormField(
                       controller: this.dateTimeController,
-                      onTap: () => {
+                      onTap: () =>
+                      {
                         FocusScope.of(context).requestFocus(new FocusNode()),
-                        DatePicker.showDatePicker(context,
-                            showTitleActions: true,
-                            minTime: DateTime.now(),
-                            maxTime: DateTime(2050, 1, 1), onChanged: (date) {
-                          this.dateTimeController.text = _formatDateTime(date);
-                          this.dateTime = date;
-                        }, onConfirm: (date) {
-                          this.dateTimeController.text = _formatDateTime(date);
-                          this.dateTime = date;
-                        }, currentTime: DateTime.now(), locale: LocaleType.de)
+                        DatePicker.showDatePicker(
+                          context,
+                          showTitleActions: true,
+                          minTime: DateTime.now(),
+                          maxTime: DateTime(2050, 1, 1),
+                          onChanged: (date) {
+                            this.dateTimeController.text =
+                                Utils.formatTime(date);
+                            this.dateTime = date;
+                          },
+                          onConfirm: (date) {
+                            this.dateTimeController.text =
+                                Utils.formatTime(date);
+                            this.dateTime = date;
+                          },
+                          currentTime: DateTime.now(),
+                          locale: LocaleType.de,
+                        )
                       },
                       decoration: InputDecoration(
                         labelText: "Fälligkeitsdatum",
-                        labelStyle: TextStyle(color: Colors.grey, fontSize: 20),
+                        labelStyle: TextStyle(
+                          fontFamily: 'Poppins',
+                          color: Colors.grey,
+                          fontSize: 20,
+                        ),
                       ),
                     ),
                     Padding(
@@ -102,10 +115,14 @@ class NoteCreateRoute extends StatelessWidget {
                           borderRadius: BorderRadius.all(Radius.circular(0)),
                           child: Text(
                             "Speichern",
-                            style: TextStyle(letterSpacing: 1.2, fontSize: 20),
+                            style: TextStyle(
+                              fontFamily: 'Poppins',
+                              letterSpacing: 1.2,
+                              fontSize: 20,
+                            ),
                           ),
                           onPressed: () => {
-                            if (_formKey.currentState.validate())
+                            if (this._formKey.currentState.validate())
                               {
                                 _addNote(
                                   context,
@@ -134,10 +151,15 @@ class NoteCreateRoute extends StatelessWidget {
 
 _addNote(BuildContext context, Note note) {
   Note.notes.add(note);
-  writeNotes();
-  Navigator.pop(context);
+  backend.insertNote(note);
+  Utils.pop(context);
 }
 
-String _formatDateTime(DateTime dateTime) {
-  return DateFormat('dd.MM.yyyy').format(dateTime);
+FormFieldValidator _createValidator(String promptText) {
+  return (value) {
+    if (value.isEmpty) {
+      return promptText;
+    }
+    return null;
+  };
 }

@@ -18,7 +18,8 @@ environment:
 
 dependencies:
   intl:
-  path_provider:
+  sqflite:
+  path:
   flutter_datetime_picker:
   flutter_iconpicker:
   flutter:

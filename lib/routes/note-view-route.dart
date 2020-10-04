@@ -1,18 +1,23 @@
 import 'package:Notes/note.dart';
+import 'package:Notes/utils/utils.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
-import 'package:intl/intl.dart';
+
+import '../main.dart';
 
 class NoteViewRoute extends StatelessWidget {
-  Note note;
-  TextEditingController dateTimeController;
-
-  NoteViewRoute(Note note) {
-    this.note = note;
-    this.dateTimeController =
-        new TextEditingController(text: _formatDateTime(note.expireAt));
+  static NoteViewRoute create(Note note) {
+    return NoteViewRoute(
+      note,
+      new TextEditingController(text: Utils.formatTime(note.expireAt)),
+    );
   }
+
+  final Note note;
+  final TextEditingController dateTimeController;
+
+  NoteViewRoute(this.note, this.dateTimeController);
 
   @override
   Widget build(BuildContext context) {
@@ -26,43 +31,64 @@ class NoteViewRoute extends StatelessWidget {
         },
         child: Center(
           child: Container(
-            margin: EdgeInsets.only(top: 30.0, right: 30.0, left: 30.0),
             child: Form(
               child: ListView(
                 children: <Widget>[
                   TextFormField(
-                    onChanged: (text) => {note.topic = text},
+                    onChanged: (text) => {
+                      this.note.topic = text,
+                      backend.updateNote(this.note),
+                    },
                     textAlign: TextAlign.left,
                     initialValue: this.note.topic,
                     decoration: InputDecoration(
                       labelText: "Titel",
-                      labelStyle: TextStyle(color: Colors.grey, fontSize: 20),
+                      labelStyle: TextStyle(
+                        fontFamily: 'Poppins',
+                        color: Colors.grey,
+                        fontSize: 20,
+                      ),
                     ),
                   ),
                   TextFormField(
-                    onChanged: (text) => {note.value = text},
+                    onChanged: (text) =>
+                    {
+                      this.note.value = text,
+                      backend.updateNote(this.note),
+                    },
                     textAlign: TextAlign.left,
                     initialValue: this.note.value,
                     decoration: InputDecoration(
                       labelText: "Inhalt",
-                      labelStyle: TextStyle(color: Colors.grey, fontSize: 20),
+                      labelStyle: TextStyle(
+                        fontFamily: 'Poppins',
+                        color: Colors.grey,
+                        fontSize: 20,
+                      ),
                     ),
                   ),
                   TextFormField(
                     controller: this.dateTimeController,
-                    onChanged: (text) => {note.value = text},
-                    onTap: () => {
+                    onTap: () =>
+                    {
                       FocusScope.of(context).requestFocus(new FocusNode()),
-                      DatePicker.showDatePicker(context,
-                          showTitleActions: true,
-                          minTime: DateTime.now(),
-                          maxTime: DateTime(2050, 1, 1), onChanged: (date) {
-                        this.dateTimeController.text = _formatDateTime(date);
-                        this.note.expireAt = date;
-                      }, onConfirm: (date) {
-                        this.dateTimeController.text = _formatDateTime(date);
-                        this.note.expireAt = date;
-                      }, currentTime: DateTime.now(), locale: LocaleType.de)
+                      DatePicker.showDatePicker(
+                        context,
+                        showTitleActions: true,
+                        minTime: DateTime.now(),
+                        maxTime: DateTime(2050, 1, 1),
+                        onChanged: (date) {
+                          this.dateTimeController.text = Utils.formatTime(date);
+                          this.note.expireAt = date;
+                        },
+                        onConfirm: (date) {
+                          this.dateTimeController.text = Utils.formatTime(date);
+                          this.note.expireAt = date;
+                          backend.updateNote(this.note);
+                        },
+                        currentTime: this.note.expireAt,
+                        locale: LocaleType.de,
+                      ),
                     },
                     decoration: InputDecoration(
                       labelText: "Fälligkeitsdatum",
@@ -84,9 +110,11 @@ class NoteViewRoute extends StatelessWidget {
                         ),
                         backgroundColor: Colors.redAccent,
                         tooltip: "Lösche diesen Eintrag",
-                        onPressed: () => {
+                        onPressed: () =>
+                        {
                           Note.notes.remove(this.note),
-                          Navigator.pop(context),
+                          backend.deleteNote(this.note),
+                          Utils.pop(context),
                         },
                       ),
                     ],
@@ -99,8 +127,4 @@ class NoteViewRoute extends StatelessWidget {
       ),
     );
   }
-}
-
-String _formatDateTime(DateTime dateTime) {
-  return DateFormat('dd.MM.yyyy').format(dateTime);
 }

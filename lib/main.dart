@@ -1,12 +1,20 @@
+import 'package:Notes/db/backend.dart';
 import 'package:Notes/note.dart';
 import 'package:Notes/routes/note-create-route.dart';
+import 'package:Notes/widgets/note-widget.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 
-import 'routes/note-view-route.dart';
+final Backend backend = Backend();
 
-void main() => runApp(NoteApp());
+void main() {
+  backend.open().whenComplete(() {
+    backend.notes().then((value) {
+      Note.notes.addAll(value);
+      runApp(NoteApp());
+    });
+  });
+}
 
 class NoteApp extends StatelessWidget {
   @override
@@ -14,9 +22,10 @@ class NoteApp extends StatelessWidget {
     return MaterialApp(
       title: 'Notizen',
       theme: ThemeData(
-          primarySwatch: Colors.green,
-          primaryColor: Colors.greenAccent,
-          backgroundColor: Color.fromRGBO(10, 207, 131, 1)),
+        primarySwatch: Colors.green,
+        primaryColor: Colors.greenAccent,
+        backgroundColor: Color.fromRGBO(10, 207, 131, 1),
+      ),
       home: NoteHomePage(
         title: 'Deine Notizen',
       ),
@@ -43,7 +52,7 @@ class _NoteHomeState extends State<NoteHomePage> {
         ),
       ),
       body: Center(
-        child: printWidgets(context),
+        child: printNotes(context),
       ),
       floatingActionButton: FloatingActionButton(
         backgroundColor: Colors.greenAccent,
@@ -59,7 +68,7 @@ class _NoteHomeState extends State<NoteHomePage> {
   }
 }
 
-Widget printWidgets(BuildContext context) {
+Widget printNotes(BuildContext context) {
   if (Note.notes.isNotEmpty) {
     return ListView(
       children: _loadWidgets(context),
@@ -77,7 +86,10 @@ Widget printWidgets(BuildContext context) {
       Text(
         "Keine Notizen vorhanden!",
         textAlign: TextAlign.center,
-        style: TextStyle(fontSize: 30, fontFamily: 'Poppins'),
+        style: TextStyle(
+          fontFamily: 'Poppins',
+          fontSize: 30,
+        ),
       )
     ],
   );
@@ -85,80 +97,6 @@ Widget printWidgets(BuildContext context) {
 
 List<Widget> _loadWidgets(BuildContext context) {
   List<Note> notes = List<Note>.from(Note.notes);
-  notes.sort((first, second) => second.createdAt.compareTo(first.createdAt));
   notes.sort((first, second) => second.expireAt.compareTo(first.expireAt));
-  return notes.map((note) => _createCard(context, note)).toList();
-}
-
-Widget _createCard(BuildContext context, Note note) {
-  double height = MediaQuery.of(context).size.height;
-  return GestureDetector(
-    onTap: () => {
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => NoteViewRoute(note)),
-      ),
-    },
-    child: Container(
-      margin: EdgeInsets.only(top: 10, left: 10, right: 10),
-      child: Card(
-        child: Column(
-          children: <Widget>[
-            Container(
-              decoration: BoxDecoration(
-                boxShadow: [
-                  BoxShadow(color: Colors.grey, spreadRadius: 0.3),
-                ],
-              ),
-              child: Column(
-                children: <Widget>[
-                  SizedBox(
-                    width: double.infinity,
-                    height: (height / 2) * 0.5,
-                    child: Container(
-                      child: Center(
-                        child: ListTile(
-                          title: Text(
-                            note.topic.toUpperCase(),
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                                fontFamily: 'Poppins',
-                                fontSize: 35,
-                                color: Colors.white,
-                                letterSpacing: 2,
-                                height: 1.25),
-                          ),
-                          subtitle: Text(
-                            "Fällig am: " +
-                                DateFormat('dd.MM.yyyy').format(note.expireAt),
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              fontSize: 18,
-                            ),
-                          ),
-                        ),
-                      ),
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          begin: Alignment.topLeft,
-                          end: Alignment(
-                            0.8,
-                            0.0,
-                          ),
-                          colors: [
-                            const Color.fromRGBO(15, 245, 157, 1),
-                            const Color.fromRGBO(10, 207, 131, 1)
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            )
-          ],
-        ),
-      ),
-    ),
-  );
+  return notes.map((note) => NoteWidget(note)).toList();
 }
