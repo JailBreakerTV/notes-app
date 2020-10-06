@@ -1,4 +1,5 @@
 import 'package:Notes/note.dart';
+import 'package:Notes/utils/noteListViewModel.dart';
 import 'package:Notes/utils/utils.dart';
 import 'package:Notes/widgets/note-appbar.dart';
 import 'package:flutter/cupertino.dart';
@@ -8,17 +9,19 @@ import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import '../main.dart';
 
 class NoteViewRoute extends StatelessWidget {
-  static NoteViewRoute create(Note note) {
+  static NoteViewRoute create(NoteListViewModel viewModel, Note note) {
     return NoteViewRoute(
       note,
+      viewModel,
       new TextEditingController(text: Utils.formatTime(note.expireAt)),
     );
   }
 
   final Note note;
+  final NoteListViewModel viewModel;
   final TextEditingController dateTimeController;
 
-  NoteViewRoute(this.note, this.dateTimeController);
+  NoteViewRoute(this.note, this.viewModel, this.dateTimeController);
 
   @override
   Widget build(BuildContext context) {
@@ -54,12 +57,12 @@ class NoteViewRoute extends StatelessWidget {
                     ),
                   ),
                   TextFormField(
-                    onChanged: (text) =>
-                    {
-                      if (text.isNotEmpty) {
-                        this.note.value = text,
-                        backend.updateNote(this.note),
-                      }
+                    onChanged: (text) => {
+                      if (text.isNotEmpty)
+                        {
+                          this.note.value = text,
+                          backend.updateNote(this.note),
+                        }
                     },
                     maxLines: null,
                     textAlign: TextAlign.left,
@@ -119,7 +122,7 @@ class NoteViewRoute extends StatelessWidget {
                         tooltip: "Lösche diesen Eintrag",
                         onPressed: () =>
                         {
-                          Note.notes.remove(this.note),
+                          this.viewModel.removeNote(this.note),
                           backend.deleteNote(this.note),
                           Utils.pop(context),
                         },

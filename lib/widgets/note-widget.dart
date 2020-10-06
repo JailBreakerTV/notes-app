@@ -1,20 +1,25 @@
 import 'package:Notes/note.dart';
 import 'package:Notes/routes/note-view-route.dart';
+import 'package:Notes/utils/noteListViewModel.dart';
 import 'package:Notes/utils/utils.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class NoteWidget extends StatelessWidget {
   final Note note;
+  final NoteListViewModel viewModel;
 
-  NoteWidget(this.note);
+  NoteWidget(this.note, this.viewModel);
 
   @override
   Widget build(BuildContext context) {
     final double width = double.infinity;
     final double height = MediaQuery.of(context).size.height;
     return GestureDetector(
-      onTap: () => {Utils.pushWidget(context, NoteViewRoute.create(this.note))},
+      onTap: () => {
+        Utils.pushWidget(
+            context, NoteViewRoute.create(this.viewModel, this.note))
+      },
       child: Container(
         margin: EdgeInsets.only(top: 10, left: 10, right: 10),
         child: Card(

@@ -22,6 +22,7 @@ dependencies:
   path:
   flutter_datetime_picker:
   flutter_iconpicker:
+  provider:
   flutter:
     sdk: flutter
 

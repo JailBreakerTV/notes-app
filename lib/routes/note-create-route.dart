@@ -1,5 +1,6 @@
 import 'package:Notes/main.dart';
 import 'package:Notes/note.dart';
+import 'package:Notes/utils/noteListViewModel.dart';
 import 'package:Notes/utils/utils.dart';
 import 'package:Notes/widgets/note-appbar.dart';
 import 'package:flutter/cupertino.dart';
@@ -8,6 +9,10 @@ import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 
 // ignore: must_be_immutable
 class NoteCreateRoute extends StatelessWidget {
+  final NoteListViewModel viewModel;
+
+  NoteCreateRoute(this.viewModel);
+
   final _formKey = GlobalKey<FormState>();
 
   DateTime dateTime = DateTime.now();
@@ -74,8 +79,7 @@ class NoteCreateRoute extends StatelessWidget {
                     ),
                     TextFormField(
                       controller: this.dateTimeController,
-                      onTap: () =>
-                      {
+                      onTap: () => {
                         FocusScope.of(context).requestFocus(new FocusNode()),
                         DatePicker.showDatePicker(
                           context,
@@ -146,19 +150,19 @@ class NoteCreateRoute extends StatelessWidget {
       ),
     );
   }
-}
 
-_addNote(BuildContext context, Note note) {
-  Note.notes.add(note);
-  backend.insertNote(note);
-  Utils.pop(context);
-}
+  _addNote(BuildContext context, Note note) {
+    this.viewModel.addNote(note);
+    backend.insertNote(note);
+    Utils.pop(context);
+  }
 
-FormFieldValidator _createValidator(String promptText) {
-  return (value) {
-    if (value.isEmpty) {
-      return promptText;
-    }
-    return null;
-  };
+  FormFieldValidator _createValidator(String promptText) {
+    return (value) {
+      if (value.isEmpty) {
+        return promptText;
+      }
+      return null;
+    };
+  }
 }

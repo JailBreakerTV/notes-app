@@ -31,11 +31,14 @@ class NoteAppBar extends StatelessWidget with PreferredSizeWidget {
       title: Text(
         this.title,
         style: TextStyle(
-            fontFamily: 'Poppins',
-            fontSize: 20,
-            color: Colors.white,
-            fontWeight: FontWeight.bold,
-            shadows: [Shadow(color: Colors.black, blurRadius: 0.5)]),
+          fontFamily: 'Poppins',
+          fontSize: 20,
+          color: Colors.white,
+          fontWeight: FontWeight.bold,
+          shadows: [
+            Shadow(color: Colors.black, blurRadius: 0.5),
+          ],
+        ),
       ),
     );
   }

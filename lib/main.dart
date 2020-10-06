@@ -1,20 +1,17 @@
 import 'package:Notes/db/backend.dart';
-import 'package:Notes/note.dart';
 import 'package:Notes/routes/note-create-route.dart';
+import 'package:Notes/utils/noteListPage.dart';
+import 'package:Notes/utils/noteListViewModel.dart';
 import 'package:Notes/widgets/note-appbar.dart';
-import 'package:Notes/widgets/note-widget.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 final Backend backend = Backend();
 
-void main() {
-  backend.open().whenComplete(() {
-    backend.notes().then((value) {
-      Note.notes.addAll(value);
-      runApp(NoteApp());
-    });
-  });
+void main() async {
+  await backend.open();
+  runApp(NoteApp());
 }
 
 class NoteApp extends StatelessWidget {
@@ -27,8 +24,11 @@ class NoteApp extends StatelessWidget {
         primaryColor: Colors.greenAccent,
         backgroundColor: Color.fromRGBO(10, 207, 131, 1),
       ),
-      home: NoteHomePage(
-        title: 'Deine Notizen',
+      home: ChangeNotifierProvider(
+        create: (_) => new NoteListViewModel(),
+        child: NoteHomePage(
+          title: 'Deine Notizen',
+        ),
       ),
     );
   }
@@ -46,54 +46,23 @@ class NoteHomePage extends StatefulWidget {
 class _NoteHomeState extends State<NoteHomePage> {
   @override
   Widget build(BuildContext context) {
+    final viewModel = Provider.of<NoteListViewModel>(context, listen: true);
+
     return Scaffold(
       appBar: NoteAppBar(super.widget.title),
       body: Center(
-        child: printNotes(context),
+        child: NoteListPage(viewModel),
       ),
       floatingActionButton: FloatingActionButton(
         backgroundColor: Colors.greenAccent,
         onPressed: () => {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => NoteCreateRoute()),
+            MaterialPageRoute(builder: (context) => NoteCreateRoute(viewModel)),
           ),
         },
         child: Icon(Icons.add_to_photos),
       ),
     );
   }
-}
-
-Widget printNotes(BuildContext context) {
-  if (Note.notes.isNotEmpty) {
-    return ListView(
-      children: _loadWidgets(context),
-    );
-  }
-  return Column(
-    mainAxisAlignment: MainAxisAlignment.center,
-    crossAxisAlignment: CrossAxisAlignment.center,
-    children: <Widget>[
-      Icon(
-        Icons.hourglass_empty,
-        color: Colors.redAccent,
-        size: 120,
-      ),
-      Text(
-        "Keine Notizen vorhanden!",
-        textAlign: TextAlign.center,
-        style: TextStyle(
-          fontFamily: 'Poppins',
-          fontSize: 30,
-        ),
-      )
-    ],
-  );
-}
-
-List<Widget> _loadWidgets(BuildContext context) {
-  List<Note> notes = List<Note>.from(Note.notes);
-  notes.sort((first, second) => first.expireAt.compareTo(second.expireAt));
-  return notes.map((note) => NoteWidget(note)).toList();
 }
