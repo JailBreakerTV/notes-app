@@ -13,7 +13,7 @@ class NoteWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final double width = double.infinity;
+    final double width = MediaQuery.of(context).size.width;
     final double height = MediaQuery.of(context).size.height;
     return GestureDetector(
       onTap: () => {
@@ -23,55 +23,45 @@ class NoteWidget extends StatelessWidget {
       child: Container(
         margin: EdgeInsets.only(top: 10, left: 10, right: 10),
         child: Card(
-          child: Column(
-            children: <Widget>[
-              Container(
-                decoration: BoxDecoration(
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.grey,
-                      spreadRadius: 0.3,
-                    ),
-                  ],
+          child: Container(
+            decoration: BoxDecoration(
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.grey,
+                  spreadRadius: 0.3,
                 ),
-                child: Column(
-                  children: <Widget>[
-                    SizedBox(
-                      width: width,
-                      height: (height / 2) * 0.5,
-                      child: Container(
-                        child: Center(
-                          child: ListTile(
-                            title: Text(
-                              _cutNoteTopic(this.note),
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                fontFamily: 'Poppins',
-                                fontSize: 35,
-                                color: Colors.white,
-                                letterSpacing: 2,
-                                height: 1.25,
-                              ),
-                            ),
-                            subtitle: _createExpireText(this.note),
-                          ),
-                        ),
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            begin: Alignment.topLeft,
-                            end: Alignment(0.8, 0.0),
-                            colors: [
-                              const Color.fromRGBO(15, 245, 157, 1),
-                              const Color.fromRGBO(10, 207, 131, 1)
-                            ],
-                          ),
-                        ),
+              ],
+            ),
+            child: SizedBox(
+              width: width / 2,
+              height: (height / 2),
+              child: Container(
+                child: Center(
+                  child: ListTile(
+                    title: Text(
+                      _cutNoteTopic(this.note),
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontFamily: 'Poppins',
+                        fontSize: 30,
+                        color: Colors.white,
                       ),
                     ),
-                  ],
+                    subtitle: _createExpireText(this.note),
+                  ),
                 ),
-              )
-            ],
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment(0.8, 0.0),
+                    colors: [
+                      const Color.fromRGBO(15, 245, 157, 1),
+                      const Color.fromRGBO(10, 207, 131, 1)
+                    ],
+                  ),
+                ),
+              ),
+            ),
           ),
         ),
       ),
@@ -82,11 +72,11 @@ class NoteWidget extends StatelessWidget {
 Text _createExpireText(Note note) {
   final bool critical = note.expireAt.difference(note.createdAt).inDays > 1;
   return Text(
-    "Fällig am: " + Utils.formatTime(note.expireAt),
+    Utils.formatTime(note.expireAt),
     textAlign: TextAlign.center,
     style: TextStyle(
       fontFamily: 'Poppins',
-      fontSize: 18,
+      fontSize: 20,
       color: critical ? Colors.white : Colors.redAccent,
     ),
   );

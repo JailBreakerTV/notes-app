@@ -20,7 +20,15 @@ class NoteListViewModel extends ChangeNotifier {
 
   void removeNote(Note note) {
     if (this.notes != null) {
-      this.notes.remove(note);
+      this.notes.removeWhere((element) => element.noteId == note.noteId);
+      notifyListeners();
+    }
+  }
+
+  void updateNote(Note note) {
+    if (this.notes != null) {
+      this.notes.removeWhere((element) => element.noteId == note.noteId);
+      this.notes.add(note);
       notifyListeners();
     }
   }

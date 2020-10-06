@@ -42,6 +42,7 @@ class NoteViewRoute extends StatelessWidget {
                       if (text.isNotEmpty)
                         {
                           this.note.topic = text,
+                          this.viewModel.updateNote(note),
                           backend.updateNote(this.note),
                         }
                     },
@@ -61,6 +62,7 @@ class NoteViewRoute extends StatelessWidget {
                       if (text.isNotEmpty)
                         {
                           this.note.value = text,
+                          this.viewModel.updateNote(note),
                           backend.updateNote(this.note),
                         }
                     },
@@ -79,8 +81,7 @@ class NoteViewRoute extends StatelessWidget {
                   ),
                   TextFormField(
                     controller: this.dateTimeController,
-                    onTap: () =>
-                    {
+                    onTap: () => {
                       FocusScope.of(context).requestFocus(new FocusNode()),
                       DatePicker.showDatePicker(
                         context,
@@ -90,10 +91,13 @@ class NoteViewRoute extends StatelessWidget {
                         onChanged: (date) {
                           this.dateTimeController.text = Utils.formatTime(date);
                           this.note.expireAt = date;
+                          this.viewModel.updateNote(note);
+                          backend.updateNote(this.note);
                         },
                         onConfirm: (date) {
                           this.dateTimeController.text = Utils.formatTime(date);
                           this.note.expireAt = date;
+                          this.viewModel.updateNote(note);
                           backend.updateNote(this.note);
                         },
                         currentTime: this.note.expireAt,

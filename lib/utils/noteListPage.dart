@@ -49,14 +49,19 @@ class _NoteListPageState extends State<NoteListPage> {
         ],
       );
     } else {
-      return ListView(
-        children:
-            _loadWidgets(super.widget.viewModel, super.widget.viewModel.notes),
+      // return ListView(
+      //   children:
+      //       _loadWidgets(super.widget.viewModel, super.widget.viewModel.notes),
+      // );
+      return GridView.count(
+        crossAxisCount: 2,
+        children: _loadWidgets(super.widget.viewModel),
       );
     }
   }
 
-  List<Widget> _loadWidgets(NoteListViewModel viewModel, List<Note> notes) {
+  List<Widget> _loadWidgets(NoteListViewModel viewModel) {
+    List<Note> notes = List.from(viewModel.notes);
     notes.sort((first, second) => first.expireAt.compareTo(second.expireAt));
     return notes.map((note) => NoteWidget(note, viewModel)).toList();
   }
